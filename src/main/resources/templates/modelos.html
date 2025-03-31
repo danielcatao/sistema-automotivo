@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestão de Modelos</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container">
+    <!-- Menu -->
+    <nav>
+        <ul>
+            <li><a th:href="@{/}">Veículos</a></li>
+            <li><a th:href="@{/marcas}">Marcas</a></li>
+            <li><a th:href="@{/modelos}">Modelos</a></li>
+        </ul>
+    </nav>
+
+    <h1>Gestão de Modelos</h1>
+
+    <form th:action="@{/modelos}" th:object="${modelo}" method="post">
+        <input type="hidden" th:field="*{id}" />
+        <div>
+            <label>Nome:</label>
+            <input type="text" th:field="*{nome}" required />
+        </div>
+        <div>
+            <label>Marca:</label>
+            <select th:field="*{marca.id}" required>
+                <option value="">Selecione uma marca</option>
+                <option th:each="marca : ${marcas}" th:value="${marca.id}" th:text="${marca.nome}"></option>
+            </select>
+        </div>
+        <button type="submit">Salvar</button>
+        <button type="button" onclick="limparFormulario()">Novo</button>
+    </form>
+
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>Marca</th>
+            <th>Ações</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="modelo : ${modelos}">
+            <td th:text="${modelo.id}"></td>
+            <td th:text="${modelo.nome}"></td>
+            <td th:text="${modelo.marca.nome}"></td>
+            <td>
+                <button th:onclick="'editar(' + ${modelo.id} + ')'">Editar</button>
+                <form th:action="@{/modelos/delete/{id}(id=${modelo.id})}" method="post" style="display:inline;">
+                    <button type="submit">Excluir</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    function editar(id) {
+        window.location.href = '/modelos/edit/' + id;
+    }
+
+    function limparFormulario() {
+        document.querySelector('form').reset();
+        document.querySelector('input[name="id"]').value = '';
+    }
+</script>
+</body>
+</html>

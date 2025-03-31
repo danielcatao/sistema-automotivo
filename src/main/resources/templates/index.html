@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestão de Veículos</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container">
+    <!-- Menu -->
+    <nav>
+        <ul>
+            <li><a th:href="@{/}">Veículos</a></li>
+            <li><a th:href="@{/marcas}">Marcas</a></li>
+            <li><a th:href="@{/modelos}">Modelos</a></li>
+        </ul>
+    </nav>
+
+    <h1>Gestão de Veículos</h1>
+
+    <!-- Formulário de filtros -->
+    <form th:action="@{/filter}" method="get" class="filter-form">
+        <div>
+            <label>Marca:</label>
+            <select name="marcaId">
+                <option value="">Todas</option>
+                <option th:each="marca : ${marcas}" th:value="${marca.id}" th:text="${marca.nome}"></option>
+            </select>
+        </div>
+        <div>
+            <label>Modelo:</label>
+            <select name="modeloId">
+                <option value="">Todos</option>
+                <option th:each="modelo : ${modelos}" th:value="${modelo.id}" th:text="${modelo.nome}"></option>
+            </select>
+        </div>
+        <div>
+            <label>Preço Mínimo:</label>
+            <input type="number" step="0.01" name="precoMin" />
+        </div>
+        <div>
+            <label>Preço Máximo:</label>
+            <input type="number" step="0.01" name="precoMax" />
+        </div>
+        <div>
+            <label>Ano Mínimo:</label>
+            <input type="number" name="anoMin" />
+        </div>
+        <div>
+            <label>Ano Máximo:</label>
+            <input type="number" name="anoMax" />
+        </div>
+        <div>
+            <label>Status:</label>
+            <select name="status">
+                <option value="">Todos</option>
+                <option value="DISPONIVEL">Disponível</option>
+                <option value="VENDIDO">Vendido</option>
+            </select>
+        </div>
+        <button type="submit">Filtrar</button>
+        <button type="button" onclick="window.location.href='/'">Limpar</button>
+    </form>
+
+    <!-- Formulário para adicionar/atualizar -->
+    <form th:action="@{/}" th:object="${veiculo}" method="post">
+        <input type="hidden" th:field="*{id}" />
+        <div>
+            <label>Marca:</label>
+            <select th:field="*{marca.id}" required>
+                <option value="">Selecione uma marca</option>
+                <option th:each="marca : ${marcas}" th:value="${marca.id}" th:text="${marca.nome}"></option>
+            </select>
+        </div>
+        <div>
+            <label>Modelo:</label>
+            <select th:field="*{modelo.id}" required>
+                <option value="">Selecione um modelo</option>
+                <option th:each="modelo : ${modelos}" th:value="${modelo.id}" th:text="${modelo.nome}"></option>
+            </select>
+        </div>
+        <div>
+            <label>Cor:</label>
+            <input type="text" th:field="*{cor}" />
+        </div>
+        <div>
+            <label>Ano Fab:</label>
+            <input type="number" th:field="*{ano_fabricacao}" />
+        </div>
+        <div>
+            <label>Preço:</label>
+            <input type="number" step="0.01" th:field="*{preco}" />
+        </div>
+        <div>
+            <label>Quilometragem:</label>
+            <input type="number" th:field="*{quilometragem}" />
+        </div>
+        <div>
+            <label>Status:</label>
+            <select th:field="*{status}">
+                <option value="DISPONIVEL">Disponível</option>
+                <option value="VENDIDO">Vendido</option>
+            </select>
+        </div>
+        <button type="submit">Salvar</button>
+        <button type="button" onclick="limparFormulario()">Novo</button>
+    </form>
+
+    <!-- Tabela de veículos -->
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Marca</th>
+            <th>Modelo</th>
+            <th>Cor</th>
+            <th>Ano Fab</th>
+            <th>Preço</th>
+            <th>Quilometragem</th>
+            <th>Status</th>
+            <th>Ações</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="veiculo : ${veiculos}">
+            <td th:text="${veiculo.id}"></td>
+            <td th:text="${veiculo.marca.nome}"></td>
+            <td th:text="${veiculo.modelo.nome}"></td>
+            <td th:text="${veiculo.cor}"></td>
+            <td th:text="${veiculo.ano_fabricacao}"></td>
+            <td th:text="${veiculo.preco}"></td>
+            <td th:text="${veiculo.quilometragem}"></td>
+            <td th:text="${veiculo.status}"></td>
+            <td>
+                <button th:onclick="'editar(' + ${veiculo.id} + ')'">Editar</button>
+                <form th:action="@{/delete/{id}(id=${veiculo.id})}" method="post" style="display:inline;">
+                    <button type="submit">Excluir</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    function editar(id) {
+        window.location.href = '/edit/' + id;
+    }
+
+    function limparFormulario() {
+        document.querySelector('form[method="post"]').reset();
+        document.querySelector('input[name="id"]').value = '';
+    }
+</script>
+</body>
+</html>

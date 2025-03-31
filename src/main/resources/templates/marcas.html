@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestão de Marcas</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container">
+    <!-- Menu -->
+    <nav>
+        <ul>
+            <li><a th:href="@{/}">Veículos</a></li>
+            <li><a th:href="@{/marcas}">Marcas</a></li>
+            <li><a th:href="@{/modelos}">Modelos</a></li>
+        </ul>
+    </nav>
+
+    <h1>Gestão de Marcas</h1>
+
+    <form th:action="@{/marcas}" th:object="${marca}" method="post">
+        <input type="hidden" th:field="*{id}" />
+        <div>
+            <label>Nome:</label>
+            <input type="text" th:field="*{nome}" required />
+        </div>
+        <button type="submit">Salvar</button>
+        <button type="button" onclick="limparFormulario()">Novo</button>
+    </form>
+
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>Ações</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="marca : ${marcas}">
+            <td th:text="${marca.id}"></td>
+            <td th:text="${marca.nome}"></td>
+            <td>
+                <button th:onclick="'editar(' + ${marca.id} + ')'">Editar</button>
+                <form th:action="@{/marcas/delete/{id}(id=${marca.id})}" method="post" style="display:inline;">
+                    <button type="submit">Excluir</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    function editar(id) {
+        window.location.href = '/marcas/edit/' + id;
+    }
+
+    function limparFormulario() {
+        document.querySelector('form').reset();
+        document.querySelector('input[name="id"]').value = '';
+    }
+</script>
+</body>
+</html>
